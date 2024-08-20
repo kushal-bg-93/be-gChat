@@ -27,9 +27,9 @@ const server=app.listen(process.env.PORT,()=>{
     console.log(`Server is up and running on port ${process.env.PORT}`)
 })
 
-    const io=require('./socket').init(server)
-    // const io=require('socket.io')(server)
-    io.on('connection',socket=>{
-        console.log('Client connected')
-    })
+    // const io=require('./socket').init(server)
+    // // const io=require('socket.io')(server)
+    // io.on('connection',socket=>{
+    //     console.log('Client connected')
+    // })
 
