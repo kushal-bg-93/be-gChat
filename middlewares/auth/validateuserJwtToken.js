@@ -10,24 +10,28 @@ const validateToken = async (req, res, next) => {
 
     const extractedData = await verifyToken(req?.headers?.authorization)
 
+    console.log('this is extractedData',extractedData)
+
+    
+
     if (!extractedData?.status) return notFoundError(req, res, errorMessages?.wentWrong)
     
-        const {role,email}=extractedData?.data?.userData
+        const {adminId,name,email}=extractedData?.data?.userData
 
-    if(role!=='admin') return notFoundError(req,res,errorMessages?.unauthorisedAccess)
+    if(!adminId) return notFoundError(req,res,errorMessages?.unauthorisedAccess)
 
     // res.send(extractedData)
 
-    const findUser = await findOne('Admin',{email:email},{email:1,role:1})
-
+    const findUser = await findOne('User',{email:email,isDeleted:0,verificationStatus:true},{email:1,name:1,adminId:1})
 
 
     if (!findUser) return notFoundError(req, res, errorMessages?.userDoesntExist)
 
-    req.adminData = {
+    req.userData = {
         _id:findUser?._id,
         email: findUser?.email,
-        role: findUser?.role
+        adminId: findUser?.adminId,
+        name:findUser?.name
     }
 
     next();

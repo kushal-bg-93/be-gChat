@@ -4,6 +4,7 @@ const cors=require('cors')
 const mongoose = require('mongoose')
 const helmet=require('helmet')
 const path=require('path')
+const routes=require('./routes/index-route')
 
 app.use(cors())
 
@@ -17,10 +18,12 @@ app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 // console.log(__dirname)
 
+app.use(routes)
+
 mongoose.set('debug',true)
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
-    console.log(`DB task management connected`)
+    console.log(`DB gchat connected`)
 }).catch((err)=>console.log('error in mongoose : ',err))
 
 const server=app.listen(process.env.PORT,()=>{

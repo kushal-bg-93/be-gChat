@@ -9,14 +9,15 @@ const messages={
     },
     errorMessages:{
         wentWrong:"Something went wrong",
-        userExists:"User already exists with the given email/mobile",
+        userExists:"User already exists",
         passwordNotMatch:"Password doesn't match",
         userDoesntExist:"User not found",
         tokenRequired:"token required",
         invalidCredentials:"Invalid credentials",
         unauthorisedAccess:"Unauthorised Access",
         notFound:"Not found",
-        alreadyExists:"Already Exists"
+        alreadyExists:"Already Exists",
+        alreadyLiked:"Already Liked"
     }
 }
 

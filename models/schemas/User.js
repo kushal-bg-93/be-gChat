@@ -15,15 +15,16 @@ const userSchema=new mongoose.Schema({
     },
     imageId:{
         type:String,
-        default:""
+        default:"https://png.pngitem.com/pimgs/s/35-350426_profile-icon-png-default-profile-picture-png-transparent.png"
     },
     adminId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true
+        required:true,
+        ref:'admin'
     },
     verificationStatus:{
         type:Boolean,
-        default:[false]
+        default:false
     },
     isDeleted:{
         type:Number,
