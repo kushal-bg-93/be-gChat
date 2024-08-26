@@ -3,6 +3,7 @@ const {successMessages,errorMessages}=require('../../utils/messages')
 const {insertOne,findOne,updateOne,findOneUpdatePush,findOneUpdatePull,findOneUpdateIncrement}=require('../../models/queries/commonQuery')
 const mongoose  = require('mongoose')
 const Message=require('../../models/schemas/Message')
+const socket=require('../../socket')
 
 
 const group={
@@ -44,9 +45,15 @@ const group={
             }
             let insertMsg=await Message.create(insertData)
             // await insertMsg.save()
-            
+            console.log('condition check',String(req?.userData?.Id))
             await insertMsg.populate('senderId');
+            
+            if(String(req?.userData?._id)==String(insertMsg?.senderId?._id)){
+                insertMsg=insertMsg._doc
+                insertMsg={...insertMsg,senderStatus:true,userData:insertMsg.senderId,senderId:insertMsg.senderId._id}
+            }
             // await insertMsg.populate('groupId')
+
 
             const updateLatest=await updateOne('Group',{_id:new mongoose.Types.ObjectId(groupId)},{latestMessage:insertMsg?._id})
 
@@ -124,7 +131,7 @@ const group={
         try {
             const groupId=req?.params?.id;
             const{pageNo}=req?.query;
-            const limit=3;
+            const limit=10;
             let skip=(pageNo-1)*limit
             const getMessages=await Message.aggregate([
                 {
@@ -158,6 +165,29 @@ const group={
                         },
                         likeCount:1,
                         createdAt:1
+                    }
+                },
+                {
+                    $lookup:{
+                        from:'users',
+                        localField:'senderId',
+                        foreignField:'_id',
+                        pipeline:[
+                            {
+                                $project:{
+                                    name:1,
+                                    email:1,
+                                    imageId:1,
+                                    adminId:1
+                            }
+                        }
+                        ],
+                        as:'userData'
+                    }
+                },
+                {
+                    $unwind:{
+                        path:'$userData'
                     }
                 },
                 {
@@ -199,7 +229,9 @@ const group={
                         senderId:1,
                         senderStatus:1,
                         likeData:1,
-                        likeCount:1
+                        likeCount:1,
+                        userData:1,
+                        createdAt:1
                         // likeStatus:{
                         //     $cond:{
                         //         if:{$eq:['']}

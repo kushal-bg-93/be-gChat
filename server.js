@@ -30,9 +30,30 @@ const server=app.listen(process.env.PORT,()=>{
     console.log(`Server is up and running on port ${process.env.PORT}`)
 })
 
-    // const io=require('./socket').init(server)
-    // // const io=require('socket.io')(server)
-    // io.on('connection',socket=>{
-    //     console.log('Client connected')
-    // })
+    const io=require('./socket').init(server)
+    // const io=require('socket.io')(server)
+
+    io.on('connection',socket=>{
+        console.log('Client connected')
+
+        socket.on('joinRoom', (roomId) => {
+            socket.join(roomId);
+            console.log(`User joined room: ${roomId}`);
+        
+            // Notify room members
+            socket.to(roomId).emit('message', 'A new user has joined the room');
+          });
+
+          socket.on('chatMessage', (data, roomId) => {
+            socket.to(roomId).emit('receive message', data);
+          });
+        
+        socket.on('disconnect', () => {
+            console.log('A user disconnected');
+          });
+
+          
+
+        
+    })
 

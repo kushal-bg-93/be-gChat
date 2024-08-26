@@ -27,7 +27,8 @@ const auth={
                     name:1,
                     email:1,
                     password:1,
-                    adminId:1
+                    adminId:1,
+                    imageId:1
                 }
                 query={email:email,isDeleted:0,verificationStatus:true}
             }
@@ -43,7 +44,7 @@ const auth={
             token=role==='admin'?await generateToken({email:user?.email,role:user?.role,name:user?.name}):await generateToken({email:user?.email,name:user?.name,adminId:user?.adminId})
 
 
-            return successResponse(req,res,{message:successMessages?.loginSuccess,token:token,role:user?.role??"user",_id:user?._id})
+            return successResponse(req,res,{message:successMessages?.loginSuccess,token:token,role:user?.role??"user",_id:user?._id,name:user?.name,imageId:user?.imageId??"https://png.pngitem.com/pimgs/s/35-350426_profile-icon-png-default-profile-picture-png-transparent.png"})
             
             
         } catch (error) {
