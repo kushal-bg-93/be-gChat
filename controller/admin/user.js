@@ -1,7 +1,7 @@
 const {notFoundError,internalError, successResponse}=require('../../utils/response')
 const {errorMessages,successMessages}=require('../../utils/messages')
 const User = require('../../models/schemas/User')
-const {insertOne,findOneUpdate}=require('../../models/queries/commonQuery')
+const {insertOne,findOneUpdate,pagination}=require('../../models/queries/commonQuery')
 const {encryptData}=require('../../utils/common')
 const mongoose  = require('mongoose')
 
@@ -28,7 +28,7 @@ const user={
 
     updateUser:async(req,res)=>{
         try {
-            let {name,email,id}=req?.body
+            let {name,email,id,verificationStatus,toDelete}=req?.body
             let updateData={}
 
             if(name){
@@ -42,6 +42,20 @@ const user={
                 updateData={
                     ...updateData,
                     email:email
+                }
+            }
+
+            if(verificationStatus){
+                updateData={
+                    ...updateData,
+                    verificationStatus:verificationStatus
+                }
+            }
+
+            if(toDelete){
+                updateData={
+                    ...updateData,
+                    isDeleted:toDelete
                 }
             }
 
@@ -60,6 +74,14 @@ const user={
             return internalError(req,res,error?.message)
             
         }
+    },
+
+    viewUser:async(req,res)=>{
+        let {pageNo}=req?.query
+        let limit = 5;
+        const users=await pagination('User',{adminId:new mongoose.Types.ObjectId(req?.adminData?._id)},{updatedAt:-1},limit,pageNo)
+
+        return successResponse(req,res,users)
     }
 }
 
